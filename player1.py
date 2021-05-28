@@ -102,7 +102,7 @@ class Player1Thread(threading.Thread):
                         self.canvas.delete('all')
                         self.game.last_player = self.game.player2
 
-                    elif data_type == 'Exit':
+                    elif data_type == 'Quit':
                         self.main.exitApp()
                         break
 

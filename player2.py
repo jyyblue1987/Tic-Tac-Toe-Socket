@@ -158,6 +158,7 @@ class MainWindow(Frame):
         
         self.game = BoardClass()
         self.initUI()
+        self.thread  = None
 
         self.setPlayerName()
 
@@ -167,7 +168,7 @@ class MainWindow(Frame):
 
         self.pack(fill=BOTH, expand=True, padx=10, pady=10)
         
-        frmBoard = Frame(self, background="red")
+        frmBoard = Frame(self, background="grey")
         frmBoard.pack(fill=BOTH, expand=True)
         
         self.cnsBoard = Canvas(frmBoard, highlightthickness=1, highlightbackground="grey")
@@ -176,18 +177,29 @@ class MainWindow(Frame):
         self.cnsBoard.bind('<Button-1>', self.mouse_click)
 
         btnConnect = Button(frmBoard, text = "Connect", width = 10, command = self.connectToServer)
-        btnConnect.pack(side=LEFT, expand=True)
+        btnConnect.pack(side=LEFT)
+
+        frmBoardSpace2 = Frame(self, height=10)
+        frmBoardSpace2.pack(fill=BOTH)
+
+        frmControl = Frame(self)
+        frmControl.pack(fill=BOTH, expand=False)
+
+        self.statistics = Label(frmControl, text = "Init", height = 5)
+        self.statistics.pack(fill=BOTH, side=LEFT, expand=True)
 
         draw_board_line(self.cnsBoard)
         draw_game_status(self.game, self.cnsBoard)
     
     def setPlayerName(self):
-        self.game.player1 = 'player2'
+        self.game.player2 = 'player2'
 
     def connectToServer(self):
         self.thread = Player2Thread(self, self.game, self.cnsBoard)
         if self.thread.connectToServer() == True:
             self.thread.start()
+            self.statistics.config(text="Connected")
+
         else:
             root.destroy()
        
@@ -235,7 +247,12 @@ class MainWindow(Frame):
                 self.game.last_player = self.game.player2
                 draw_game_status(self.game, self.cnsBoard)
 
+        player1, player2, last_player, total_playing_count, total_wins, total_losses, total_ties = self.game.computeStats()
 
+        value = "Player1: " + player1 + ",   Player2: " + player2 + ",  Current Player: " + last_player + "\n"
+        value += "Playing Count: " + str(total_playing_count) + ",  Wins: " + str(total_losses) + ",  Losses: " + str(total_wins) + ", Ties: " + str(total_ties)
+
+        self.statistics.config(text=value)
     def exitApp(self):
         self.stopThread()
         root.destroy()

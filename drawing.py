@@ -1,10 +1,10 @@
-start_x = 0
-start_y = 100
+start_x = 10
+start_y = 10
 step = 100
 def draw_board_line(canvas):
     # draw horizonal lines
     for y in range(start_y, start_y + 4 * step, step):        
-        canvas.create_line(0, y, start_x + 3 * step, y, fill="grey", width=5)
+        canvas.create_line(start_x, y, start_x + 3 * step, y, fill="grey", width=5)
 
     # draw vertical lines
     for x in range(start_x, start_x + 4 * step, step):        
@@ -14,7 +14,7 @@ def _create_circle(self, x, y, r, **kwargs):
     return self.create_oval(x-r, y-r, x+r, y+r, **kwargs)
 
 def draw_game_status(game, canvas):
-    
+
     draw_board_line(canvas)
     grid = game.grid
 
@@ -37,5 +37,15 @@ def draw_game_status(game, canvas):
 def get_position(x, y):
     row = (y - start_y) // step
     col = (x - start_x) // step
+
+    if row < 0:
+        row = 0
+    if row >= 2:
+        row = 2
+
+    if col < 0:
+        col = 0
+    if col >= 2:
+        col = 2
 
     return row, col
