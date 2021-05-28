@@ -195,7 +195,7 @@ class MainWindow(Frame):
         player1, player2, last_player, total_playing_count, total_wins, total_losses, total_ties = self.game.computeStats()
 
         value = "Player1: " + player1 + ",   Player2: " + player2 + ",  Current Player: " + last_player + "\n"
-        value += "Playing Count: " + str(total_playing_count) + ",  Wins: " + str(total_losses) + ",  Losses: " + str(total_wins) + ", Ties: " + str(total_ties)
+        value += "Playing Count: " + str(total_playing_count) + ",  Wins: " + str(total_wins) + ",  Losses: " + str(total_losses) + ", Ties: " + str(total_ties)
 
         self.statistics.config(text=value)
 

@@ -78,6 +78,7 @@ class BoardClass():
 
 
         if c != '':
+            self.recordGamePlayed()
             if c == 'O':    # player 1 win
                 self.total_wins += 1
             if c == 'X':    # player 2 win
@@ -86,6 +87,7 @@ class BoardClass():
             return True        
 
         if self.isBoardFull():
+            self.recordGamePlayed()
             self.total_ties += 1
             return True
 

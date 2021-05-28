@@ -11,7 +11,7 @@ from gameboard import BoardClass
 from drawing import *
 
 root = Tk()
-root.geometry("500x500+300+100")
+root.geometry("500x500+900+100")
 
 class Player2Thread(threading.Thread):
     def __init__(self, main, game, canvas):
@@ -227,7 +227,15 @@ class MainWindow(Frame):
         
     def showGameStatus(self):
         draw_game_status(self.game, self.cnsBoard)
-        if self.game.isGameFinished() == True:
+        flag = self.game.isGameFinished() 
+        player1, player2, last_player, total_playing_count, total_wins, total_losses, total_ties = self.game.computeStats()
+
+        value = "Player1: " + player1 + ",   Player2: " + player2 + ",  Current Player: " + last_player + "\n"
+        value += "Playing Count: " + str(total_playing_count) + ",  Wins: " + str(total_losses) + ",  Losses: " + str(total_wins) + ", Ties: " + str(total_ties)
+    
+        self.statistics.config(text=value)
+        
+        if flag:
             print("Game is finished")
 
             answer = messagebox.askyesno("Player2", "Do you want to play again?")
@@ -246,12 +254,9 @@ class MainWindow(Frame):
                 self.game.last_player = self.game.player2
                 draw_game_status(self.game, self.cnsBoard)
 
-        player1, player2, last_player, total_playing_count, total_wins, total_losses, total_ties = self.game.computeStats()
+        
 
-        value = "Player1: " + player1 + ",   Player2: " + player2 + ",  Current Player: " + last_player + "\n"
-        value += "Playing Count: " + str(total_playing_count) + ",  Wins: " + str(total_losses) + ",  Losses: " + str(total_wins) + ", Ties: " + str(total_ties)
-
-        self.statistics.config(text=value)
+        
     def exitApp(self):
         self.stopThread()
         root.destroy()
