@@ -36,6 +36,9 @@ class BoardClass():
                     ['', '', ''],
                     ['', '', '']]
 
+        self.last_player = self.player2
+
+
     # Updates the game board with the player's move
     def playMoveOnBoard(self, row, col):
         if self.grid[row][col] != '':

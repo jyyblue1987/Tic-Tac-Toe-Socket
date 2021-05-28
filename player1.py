@@ -96,7 +96,18 @@ class Player1Thread(threading.Thread):
                         # switch player
                         self.game.last_player = self.game.player1
 
-                        self.main.showGameStatus()
+                    elif data_type == 'Restart':
+                        print('Restart')
+                        self.game.resetGameBoard()
+                        self.game.last_player = self.game.player2
+
+                    elif data_type == 'Exit':
+                        self.main.exitApp()
+                        break
+
+                    self.main.showGameStatus()
+
+            s.close()
 
 root = Tk()
 root.geometry("500x500+300+100")
@@ -130,6 +141,8 @@ class MainWindow(Frame):
 
         draw_board_line(self.cnsBoard)
         draw_game_status(self.game, self.cnsBoard)
+
+
     
         
     def setPlayerName(self):
@@ -171,15 +184,17 @@ class MainWindow(Frame):
         if self.game.isGameFinished() == True:
             print("Game is finished")
 
+    def exitApp(self):
+        self.stopThread()
+        root.destroy()
         
 
 app = MainWindow()
 
 def on_closing():
     if messagebox.askokcancel("Quit", "Do you want to quit?"):
-        app.stopThread()
-        root.destroy()        
-
+        app.exitApp()
+        
 root.protocol("WM_DELETE_WINDOW", on_closing)
 
 root.mainloop()

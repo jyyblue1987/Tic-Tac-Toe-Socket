@@ -10,8 +10,11 @@ import time
 from gameboard import BoardClass
 from drawing import *
 
+root = Tk()
+root.geometry("500x500+300+100")
+
 class Player2Thread(threading.Thread):
-    def __init__(self, main, game, canvas, host, port):
+    def __init__(self, main, game, canvas):
         threading.Thread.__init__(self)
         self._stop_event = threading.Event()
         
@@ -19,8 +22,26 @@ class Player2Thread(threading.Thread):
         self.main = main
         self.game = game
         self.canvas = canvas
-        self.host = host
-        self.port = port
+
+    def connectToServer(self):
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        while True:            
+            try:
+                host = simpledialog.askstring(title="Player2", prompt="What's Server Address?:")
+                port = int(simpledialog.askstring(title="Player2", prompt="What's Server Port?:"))
+                
+                s.connect((host, port))
+                self.conn = s
+                break
+            except:
+                print("connection is failed")
+
+                answer = messagebox.askyesno("Player2", "Do you want to try again?")
+                if answer == False:
+                    root.destroy()   
+                    return False
+                    
+        return True
 
     def stop(self):
         self._stop_event.set()
@@ -45,12 +66,38 @@ class Player2Thread(threading.Thread):
 
         return True
 
+    def sendRestart(self):
+        if self.conn == None:
+            print("Player1 is not connected!")
+            return False
+
+        send = {
+                    'type': 'Restart',                    
+                }
+
+        send_data = json.dumps(send)
+        self.conn.send(send_data.encode('ascii'))
+
+        return True
+
+    
+    def sendQuit(self):
+        if self.conn == None:
+            print("Player1 is not connected!")
+            return False
+
+        send = {
+                    'type': 'Quit',                    
+                }
+
+        send_data = json.dumps(send)
+        self.conn.send(send_data.encode('ascii'))
+
+        return True
+
 
     def run(self):        
         # 2. Using that information they will attempt to connect to Player 1
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            s.connect((self.host, self.port))
-            self.conn = s
             
             with self.conn:
                 print('Connected To Server')
@@ -103,8 +150,7 @@ class Player2Thread(threading.Thread):
                         
                     self.main.showGameStatus()
 
-root = Tk()
-root.geometry("500x500+300+100")
+
 
 class MainWindow(Frame):
     def __init__(self):
@@ -113,12 +159,7 @@ class MainWindow(Frame):
         self.game = BoardClass()
         self.initUI()
 
-        # 1. The user will be asked to provide the host information so that it can establish a socket connection as the server
         self.setPlayerName()
-
-        # start server thread
-        self.startThread()
-
 
         
     def initUI(self):
@@ -134,29 +175,25 @@ class MainWindow(Frame):
 
         self.cnsBoard.bind('<Button-1>', self.mouse_click)
 
+        btnConnect = Button(frmBoard, text = "Connect", width = 10, command = self.connectToServer)
+        btnConnect.pack(side=LEFT, expand=True)
+
         draw_board_line(self.cnsBoard)
         draw_game_status(self.game, self.cnsBoard)
     
-        
     def setPlayerName(self):
-        # the input dialog
-        # player1 = simpledialog.askstring(title="Player1",
-        #                                 prompt="What's your name?:")
+        self.game.player1 = 'player2'
 
-        # self.game.player1 = player1
-        self.game.player2 = 'player2'
-        # self.host = simpledialog.askstring(title="Player2", prompt="What's Server Address?:")
-        # self.port = simpledialog.askstring(title="Player2", prompt="What's Server Port?:")
-
-        self.host = '127.0.0.1'
-        self.port = 65432
-
-    def startThread(self):
-        self.thread = Player2Thread(self, self.game, self.cnsBoard, self.host, self.port)
-        self.thread.start()
-
+    def connectToServer(self):
+        self.thread = Player2Thread(self, self.game, self.cnsBoard)
+        if self.thread.connectToServer() == True:
+            self.thread.start()
+        else:
+            root.destroy()
+       
     def stopThread(self):
-        self.thread.stop()
+        if self.thread != None:
+            self.thread.stop()
 
     def mouse_click(self, event):
         print("Mouse position: (%s %s)" % (event.x, event.y))
@@ -182,14 +219,32 @@ class MainWindow(Frame):
         if self.game.isGameFinished() == True:
             print("Game is finished")
 
+            answer = messagebox.askyesno("Player2", "Do you want to play again?")
+            if answer == False:
+                if self.thread != None:
+                    self.thread.sendQuit()
+                app.stopThread()
+                root.destroy()   
+                return False
+            else:
+                if self.thread != None:
+                    self.thread.sendRestart()
+                
+                self.game.resetGameBoard()
+                self.game.last_player = self.game.player2
+                draw_game_status(self.game, self.cnsBoard)
+
+
+    def exitApp(self):
+        self.stopThread()
+        root.destroy()
         
 
 app = MainWindow()
 
 def on_closing():
     if messagebox.askokcancel("Quit", "Do you want to quit?"):
-        app.stopThread()
-        root.destroy()        
+        app.exitApp()  
 
 root.protocol("WM_DELETE_WINDOW", on_closing)
 
