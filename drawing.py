@@ -1,6 +1,6 @@
 start_x = 0
 start_y = 100
-step = 200
+step = 100
 def draw_board_line(canvas):
     # draw horizonal lines
     for y in range(start_y, start_y + 4 * step, step):        
