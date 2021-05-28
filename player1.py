@@ -99,6 +99,7 @@ class Player1Thread(threading.Thread):
                     elif data_type == 'Restart':
                         print('Restart')
                         self.game.resetGameBoard()
+                        self.canvas.delete('all')
                         self.game.last_player = self.game.player2
 
                     elif data_type == 'Exit':
@@ -139,11 +140,8 @@ class MainWindow(Frame):
 
         self.cnsBoard.bind('<Button-1>', self.mouse_click)
 
-        draw_board_line(self.cnsBoard)
         draw_game_status(self.game, self.cnsBoard)
 
-
-    
         
     def setPlayerName(self):
         # the input dialog

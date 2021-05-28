@@ -231,6 +231,7 @@ class MainWindow(Frame):
                     self.thread.sendRestart()
                 
                 self.game.resetGameBoard()
+                self.cnsBoard.delete('all')
                 self.game.last_player = self.game.player2
                 draw_game_status(self.game, self.cnsBoard)
 

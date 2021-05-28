@@ -14,6 +14,8 @@ def _create_circle(self, x, y, r, **kwargs):
     return self.create_oval(x-r, y-r, x+r, y+r, **kwargs)
 
 def draw_game_status(game, canvas):
+    
+    draw_board_line(canvas)
     grid = game.grid
 
     for i in range(len(grid)):
