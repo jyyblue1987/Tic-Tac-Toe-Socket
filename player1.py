@@ -58,6 +58,7 @@ class Player1Thread(threading.Thread):
             self.conn = conn
             with conn:
                 print('Connected by', addr)
+                self.main.statistics.config(text="Player2 is connected")
 
                 # 3. When a connection request is received and accepted, Player 1 will wait for Player 2 to send their username
                 print('Player 1 will wait for Player 2 to send their username')
@@ -132,13 +133,22 @@ class MainWindow(Frame):
 
         self.pack(fill=BOTH, expand=True, padx=10, pady=10)
         
-        frmBoard = Frame(self, background="red")
+        frmBoard = Frame(self, background="grey")
         frmBoard.pack(fill=BOTH, expand=True)
         
         self.cnsBoard = Canvas(frmBoard, highlightthickness=1, highlightbackground="grey")
         self.cnsBoard.pack(fill=BOTH, expand=True, side=LEFT)
 
         self.cnsBoard.bind('<Button-1>', self.mouse_click)
+
+        frmBoardSpace2 = Frame(self, height=10)
+        frmBoardSpace2.pack(fill=BOTH)
+
+        frmControl = Frame(self)
+        frmControl.pack(fill=BOTH, expand=False)
+
+        self.statistics = Label(frmControl, text = "Init", height = 5)
+        self.statistics.pack(fill=BOTH, side=LEFT, expand=True)
 
         draw_game_status(self.game, self.cnsBoard)
 
@@ -181,6 +191,13 @@ class MainWindow(Frame):
         draw_game_status(self.game, self.cnsBoard)
         if self.game.isGameFinished() == True:
             print("Game is finished")
+
+        player1, player2, last_player, total_playing_count, total_wins, total_losses, total_ties = self.game.computeStats()
+
+        value = "Player1: " + player1 + ",   Player2: " + player2 + ",  Current Player: " + last_player + "\n"
+        value += "Playing Count: " + str(total_playing_count) + ",  Wins: " + str(total_losses) + ",  Losses: " + str(total_wins) + ", Ties: " + str(total_ties)
+
+        self.statistics.config(text=value)
 
     def exitApp(self):
         self.stopThread()

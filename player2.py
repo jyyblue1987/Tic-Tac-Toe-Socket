@@ -188,7 +188,6 @@ class MainWindow(Frame):
         self.statistics = Label(frmControl, text = "Init", height = 5)
         self.statistics.pack(fill=BOTH, side=LEFT, expand=True)
 
-        draw_board_line(self.cnsBoard)
         draw_game_status(self.game, self.cnsBoard)
     
     def setPlayerName(self):
