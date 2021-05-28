@@ -31,3 +31,9 @@ def draw_game_status(game, canvas):
             if c == 'X':                
                 canvas.create_line(x - step / 4, y - step / 4, x + step / 4, y + step / 4, fill="blue", width=4)
                 canvas.create_line(x - step / 4, y + step / 4, x + step / 4, y - step / 4, fill="blue", width=4)
+
+def get_position(x, y):
+    row = (y - start_y) // step
+    col = (x - start_x) // step
+
+    return row, col

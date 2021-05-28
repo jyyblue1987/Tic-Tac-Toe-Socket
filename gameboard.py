@@ -32,7 +32,7 @@ class BoardClass():
 
     # Clear all the moves from game board
     def resetGameBoard(self):
-        self.grid = [['O', 'X', ''],
+        self.grid = [['', '', ''],
                     ['', '', ''],
                     ['', '', '']]
 
