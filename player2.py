@@ -234,7 +234,7 @@ class MainWindow(Frame):
         value += "Playing Count: " + str(total_playing_count) + ",  Wins: " + str(total_losses) + ",  Losses: " + str(total_wins) + ", Ties: " + str(total_ties)
     
         self.statistics.config(text=value)
-        
+
         if flag:
             print("Game is finished")
 
@@ -254,7 +254,10 @@ class MainWindow(Frame):
                 self.game.last_player = self.game.player2
                 draw_game_status(self.game, self.cnsBoard)
 
-        
+                value = "Player1: " + player1 + ",   Player2: " + player2 + ",  Current Player: " + last_player + "\n"
+                value += "Playing Count: " + str(total_playing_count) + ",  Wins: " + str(total_losses) + ",  Losses: " + str(total_wins) + ", Ties: " + str(total_ties)
+ 
+                self.statistics.config(text=value)
 
         
     def exitApp(self):
