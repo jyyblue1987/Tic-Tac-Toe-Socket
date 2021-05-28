@@ -1,18 +1,47 @@
-import pygame
+from tkinter import Tk, X, Y, TOP, BOTTOM, LEFT, RIGHT, BOTH, END, NO, W
+from tkinter import Frame, Canvas, Button, Label, Entry, Checkbutton, IntVar
+
 import socket
 import threading
 from gameboard import BoardClass
 from drawing import *
 
-pygame.init()
-w = 800;
-h = 800
-screen = pygame.display.set_mode((w, h))
-pygame.display.set_caption('Player1')
 
-game = BoardClass()
+root = Tk()
+root.geometry("1200x800+300+100")
 
-draw_board_line(screen)
+
+class MainWindow(Frame):
+    def __init__(self):
+        super().__init__()
+        
+        self.game = BoardClass()
+        self.initUI()
+        
+    def initUI(self):
+        self.master.title("Player1")
+
+        self.pack(fill=BOTH, expand=True, padx=10, pady=10)
+        
+        frmBoard = Frame(self, background="red")
+        frmBoard.pack(fill=BOTH, expand=True)
+        
+        self.cnsBoard = Canvas(frmBoard, highlightthickness=1, highlightbackground="grey")
+        self.cnsBoard.pack(fill=BOTH, expand=True, side=LEFT)
+
+        draw_board_line(self.cnsBoard)
+        draw_game_status(self.game, self.cnsBoard)
+    
+        
+
+
+app = MainWindow()
+
+root.mainloop()
+
+
+
+# draw_board_line(screen)
 
 HOST = '127.0.0.1'  # Standard loopback interface address (localhost)
 PORT = 65432        # Port to listen on (non-privileged ports are > 1023)
@@ -47,25 +76,5 @@ class Player1Thread(threading.Thread):
                     # conn.sendall(data)
 
 
-    
-
-
-clock = pygame.time.Clock()  
-running = True
-
-thread = Player1Thread()
-thread.start()
-
-while (running): # loop listening for end of game
-    clock.tick(10)  
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-            thread.stop()
-
-    # This function must write after all the other drawing commands.  
-    draw_game_status(game, screen)
-    pygame.display.flip()  
-
-# loop over, quite pygame
-pygame.quit()
+# thread = Player1Thread()
+# thread.start()
