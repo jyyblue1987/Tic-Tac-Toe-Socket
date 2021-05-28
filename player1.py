@@ -16,11 +16,13 @@ class Player1Thread(threading.Thread):
     """Thread class with a stop() method. The thread itself has to check
     regularly for the stopped() condition."""
 
-    def __init__(self, game, canvas):
+    def __init__(self, main, game, canvas):
         threading.Thread.__init__(self)
         self._stop_event = threading.Event()
+        
         self.conn = None
-        self.sever = None
+        self.server = None
+        self.main = main
         self.game = game
         self.canvas = canvas
 
@@ -97,6 +99,8 @@ class Player1Thread(threading.Thread):
                         # switch player
                         self.game.last_player = self.game.player1
 
+                        self.main.showGameStatus()
+
 root = Tk()
 root.geometry("500x500+300+100")
 
@@ -141,7 +145,7 @@ class MainWindow(Frame):
         self.game.player1 = 'player1'
 
     def startThread(self):
-        self.thread = Player1Thread(self.game, self.cnsBoard)
+        self.thread = Player1Thread(self, self.game, self.cnsBoard)
         self.thread.start()
 
     def stopThread(self):
@@ -161,13 +165,16 @@ class MainWindow(Frame):
             return
 
         self.game.playMoveOnBoard(row, col)
-        draw_game_status(self.game, self.cnsBoard)
-
-        self.game.last_player = self.game.player2
         
+        self.game.last_player = self.game.player2
 
+        self.showGameStatus()
+        
+    def showGameStatus(self):
+        draw_game_status(self.game, self.cnsBoard)
         if self.game.isGameFinished() == True:
             print("Game is finished")
+
         
 
 app = MainWindow()
